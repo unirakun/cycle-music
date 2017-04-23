@@ -1,21 +1,30 @@
 import { div } from '@cycle/dom'
+import isolate from '@cycle/isolate'
 import xs from 'xstream'
+import { Instrument } from './components'
 
-export function App() {
-  const vtree$ = xs.of(
-    div('My Awesome Cycle.js app'),
-  )
+const randomFrequency = () => Math.round(Math.random() * 1000) + 200
 
-  const music$ = xs.periodic(200).map(() => {
-    return {
-      frequency: (Math.random() * 1000) + 300,
-      time: (Math.random() * 1000) + 200,
-    }
-  })
+export function App({ DOM$ }) {
+  const instruments = [
+    { frequency: randomFrequency() },
+    { name: 'guitare', frequency: randomFrequency() },
+    { name: 'piano', frequency: randomFrequency() },
+    { name: 'ocarina', frequency: randomFrequency() },
+    { name: 'tamtam', frequency: randomFrequency() },
+  ].map(props => isolate(Instrument)({ DOM$, props$: xs.of(props) }))
+
+  const vdom$ = xs
+    .combine(...instruments.map(i => i.DOM$))
+    .map(instrumentDoms => div(instrumentDoms))
+
+  const music$ = xs
+    .merge(...instruments.map(i => i.MUSIC$))
 
   const sinks = {
-    DOM$: vtree$,
+    DOM$: vdom$,
     MUSIC$: music$,
   }
+
   return sinks
 }

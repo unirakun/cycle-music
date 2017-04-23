@@ -11,6 +11,10 @@
     snabbdom "0.6.5"
     snabbdom-selector "1.1.1"
 
+"@cycle/isolate@^2.1.0":
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/@cycle/isolate/-/isolate-2.1.0.tgz#8db1c6a068dc1d3fc709d5adbe838083577ad0e0"
+
 "@cycle/run@*", "@cycle/run@^3.1.0":
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/@cycle/run/-/run-3.1.0.tgz#76df582a501d2d1b871f8f6decf263afae090384"
