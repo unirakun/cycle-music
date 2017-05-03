@@ -1,6 +1,6 @@
-import { p } from '@cycle/dom'
-import delay from 'xstream/extra/delay'
+import { img } from '@cycle/dom'
 import xs from 'xstream'
+import delay from 'xstream/extra/delay'
 
 export default ({ NOTE$, props$ }) => {
   // Map the note
@@ -24,9 +24,9 @@ export default ({ NOTE$, props$ }) => {
       note$.startWith({ stop: true }), // startWith to print the DOM the first time
       props$,
     )
-    .map(([note, props]) => p(
+    .map(([note, props]) => img(
       `.character${note.stop ? '' : '.animate'}`,
-      `${props.name} with ${props.instrument}`,
+      { props: { src: `/svg/${props.name}.svg` } },
     ))
 
   return {
