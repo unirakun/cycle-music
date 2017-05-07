@@ -1,42 +1,33 @@
 import { div } from '@cycle/dom'
 import isolate from '@cycle/isolate'
 import xs from 'xstream'
+import { NOTES } from '../../config'
 import Range from './range'
 
-const frequencies = [
-  329, // E
-  392, // G
-  587, // D
-]
-const instruments = [
-  'guitare',
-  'bass',
-  'ocarina',
-  'harp',
-]
+export default ({ DOM$, props$ }) => {
+  // Create characters component with props
+  const createRanges = props =>
+    props.map(c => isolate(Range, c.name)({
+      DOM$,
+      props$: xs.of({ character: c.name, notes: NOTES }),
+    }))
 
-export default ({ DOM$ }) => {
-  const ranges = instruments
-    .map(instrument => ({ instrument, frequencies }))
-    .map(props =>
-      isolate(
-        Range,
-        props.instrument,
-      )({ DOM$, props$: xs.of(props) }),
+  const ranges$ = props$.map(createRanges)
+
+  const vdom$ = ranges$
+    .map(ranges => ranges.map(r => r.DOM$))
+    .map(r => xs.combine(...r)
+      .map(rs => div('.rythmbox', [
+        div('.title', NOTES.map(n => div('.frequency', n))),
+        div(rs),
+      ])))
+    .flatten()
+
+  const note$ = ranges$
+    .map(ranges => xs.merge(
+      ...ranges.map(r => r.NOTE$)),
     )
-
-  const vdom$ = xs
-    .combine(...ranges.map(r => r.DOM$))
-    .map(doms => div(
-      '.rythmbox',
-      [
-        div('.title', frequencies.map(f => div('.frequency', f))),
-        div(doms),
-      ],
-    ))
-
-  const note$ = xs
-    .merge(...ranges.map(t => t.NOTE$))
+    .flatten()
 
   return {
     DOM$: vdom$,
