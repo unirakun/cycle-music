@@ -1,11 +1,11 @@
-import { div } from '@cycle/dom'
+import { img } from '@cycle/dom'
 import xs from 'xstream'
 import { WIRE_TIMEOUT } from '../../config'
 import { STOP_EVENT } from '../../constant'
 import { addDelay } from '../../utils'
 
 export default ({ MUSIC$, NOTE$, HTTP$ }) => {
-  const className = `.wire ${MUSIC$ ? '.music' : ''} ${NOTE$ ? '.note' : ''} ${HTTP$ ? '.http' : ''}`
+  const className = '.cyclejs'
 
   const start$ = xs.merge(
     MUSIC$ || xs.empty(),
@@ -19,7 +19,11 @@ export default ({ MUSIC$, NOTE$, HTTP$ }) => {
 
   const vdom$ = xs.merge(start$, stop$)
     .startWith(STOP_EVENT)
-    .map(s => div(`${className} ${s.stop && '.stop'}`))
+    .map(s =>
+      img(
+        `${className} ${s.stop ? '' : '.animate'}`,
+        { props: { src: '/svg/libraries/cyclejs.svg' } },
+      ))
 
   return {
     DOM$: vdom$,
