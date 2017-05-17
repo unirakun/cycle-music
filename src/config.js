@@ -1,12 +1,13 @@
 export const WIRE_TIMEOUT = 2000
 export const ANIMATION_TIMEOUT = 1000
-export const NOTES = ['A', 'B', 'C', 'D', 'E', 'F', 'G']
+export const NOTES = ['C', 'D', 'E', 'F', 'G', 'A', 'B']
+export const WITHOUT_SHARP = ['E', 'B']
 
 export const CHARACTERS = [
-  { name: 'Zora', instrument: 'acoustic' },
-  { name: 'Goron', instrument: 'piano' },
-  { name: 'Mojo', instrument: 'edm' },
-  { name: 'Link', instrument: 'organ' },
+  { name: 'zora', instrument: 'acoustic' },
+  { name: 'goron', instrument: 'piano' },
+  { name: 'mojo', instrument: 'edm' },
+  { name: 'link', instrument: 'organ' },
 ]
 
 export const INSTRUMENTS = [
