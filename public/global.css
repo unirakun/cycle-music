@@ -244,8 +244,13 @@ img.merge.animate {
 
 .rythmbox > .characters > div {
     color: white;
+    text-transform: capitalize;
 }
 
 input[type=checkbox] {
     margin-right: .2em;
+}
+
+.wire > img {
+    width: 3em;
 }

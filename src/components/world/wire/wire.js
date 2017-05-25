@@ -1,56 +1,59 @@
-import { div } from '@cycle/dom'
+import { div, img } from '@cycle/dom'
 import xs from 'xstream'
 import { ANIMATION_TIMEOUT } from '../../../constants'
 import { addDelay } from '../../../utils'
 
 const STEPS = 15
 const STEP_TIMEOUT = ANIMATION_TIMEOUT / STEPS
+const getStep = (stop, step) => (stop ? 0 : step * 2)
+const flow = step => (step % 2 === 0 ? 1 : -1)
+const translateX = (stop, step) => `translateX(${getStep(stop, step)}vw) translateY(${flow(step)}vh)`
+const translateY = (stop, step) => `translateY(${getStep(stop, step)}vh) translateX(${flow(step)}vw)`
+const style = ({ stop, step, type }) => ({
+  visibility: stop ? 'hidden' : 'visible',
+  transition: `transform ${STEP_TIMEOUT}ms`,
+  transform: !stop && type === 'musics' ? translateX(stop, step) : translateY(stop, -step),
+})
 
-const step = (a, i) => (a ? i * 2 : 0)
-const flow = i => (i % 2 === 0 ? 1 : -1)
-const translateX = (a, i) => `translateX(${step(a, i)}vw) translateY(${flow(i)}vh)`
-const translateY = (a, i) => `translateY(${step(a, i)}vh) translateX(${flow(i)}vw)`
-
-export default ({ NOTE$, MUSIC$, MUSICS$, HTTP$ }) => {
-  const className = `.wire ${MUSIC$ ? '.music' : ''} ${NOTE$ ? '.note' : ''} ${HTTP$ ? '.http' : ''}`
-  const content = `${MUSICS$ ? '🎶🎶' : ''} ${MUSIC$ ? '🎶' : ''} ${NOTE$ ? '🎵' : ''} ${HTTP$ ? '💩' : ''}`
-  const translate = (a, i) => `${MUSICS$ ? translateX(a, i) : ''} ${MUSIC$ ? translateY(a, -i) : ''} ${NOTE$ ? translateY(a, -i) : ''}`
-
-  const style = (animate, i) => ({
-    style: {
-      visibility: animate ? 'visible' : 'hidden',
-      transition: `transform ${STEP_TIMEOUT}ms`,
-      transform: animate && translate(animate, i),
-    },
-  })
-
-  // animation stream
-  const animation$ = xs.merge(
-    NOTE$ || xs.empty(),
-    MUSIC$ || xs.empty(),
-    MUSICS$ || xs.empty(),
-    HTTP$ || xs.empty(),
-  ).map(() => {
+const model = actions => (
+  actions
+  .map((event) => {
     const steps = []
     for (let i = 0; i < STEPS; i += 1) {
       const stepEvent = xs.of({ step: i, stop: (i === STEPS - 1) })
       steps.push(addDelay(stepEvent, STEP_TIMEOUT * i))
     }
-    return xs.merge(...steps)
+    return xs
+    .merge(...steps)
+    .map(s => ({
+      ...s,
+      ...event,
+    }))
   })
   .flatten()
-  .startWith({ stop: true }) // doesn't show at first
+    .startWith({ stop: true })
+)
 
-  const vdom$ = animation$
-    .map(animation => div(`${className} ${animation.stop && '.stop'}`, [
-      div(style(!animation.stop, animation.step), content),
-    ]))
+const view = state$ =>
+  state$.map(state => div(`.wire ${state.type} ${state.stop && '.stop'}`, [
+    img({
+      style: style(state),
+      props: { src: `/svg/notes/${state.type}.svg` },
+    }),
+  ]))
 
+const mergeStream = ({ NOTE$, MUSIC$, MUSICS$ }) =>
+  xs.merge(
+    (NOTE$ || xs.empty()).mapTo({ type: 'note' }),
+    (MUSIC$ || xs.empty()).mapTo({ type: 'music' }),
+    (MUSICS$ || xs.empty()).mapTo({ type: 'musics' }),
+  )
+
+export default (sources) => {
   return {
-    DOM$: vdom$,
-    MUSIC$: addDelay(MUSIC$),
-    MUSICS$: addDelay(MUSICS$),
-    NOTE$: addDelay(NOTE$),
-    HTTP$: addDelay(HTTP$),
+    DOM$: view(model(mergeStream(sources))),
+    MUSIC$: addDelay(sources.MUSIC$),
+    MUSICS$: addDelay(sources.MUSICS$),
+    NOTE$: addDelay(sources.NOTE$),
   }
 }
