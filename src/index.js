@@ -1,13 +1,25 @@
 import { run } from '@cycle/run'
-import { makeDOMDriver } from '@cycle/dom'
-import App from './app'
-import { music } from './drivers'
+import { makeDOMDriver /* , img*/ } from '@cycle/dom'
+import list from './list'
 
-const main = App
+const CHARACTER_NAMES = ['zora']
+
+const Character = (/* sources */) => {
+  const sinks = {}
+  return sinks
+}
+
+const main = (sources) => {
+  const characters = CHARACTER_NAMES.map(name => Character({ ...sources, name }))
+
+  const sinks = {
+    ...list(characters)(sources),
+  }
+  return sinks
+}
 
 const drivers = {
   DOM$: makeDOMDriver('#app'),
-  MUSIC$: music,
 }
 
 run(main, drivers)
