@@ -3,7 +3,7 @@ import { makeDOMDriver } from '@cycle/dom'
 import list from './list'
 import Character from './character'
 
-const CHARACTER_NAMES = ['zora']
+const CHARACTER_NAMES = ['zora', 'goron']
 
 const main = (sources) => {
   const characters = CHARACTER_NAMES.map(name => Character({ ...sources, name }))
