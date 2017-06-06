@@ -20,7 +20,7 @@ export default ({ DOM$ }) => {
   }))
   // Create Character connected to note wire
   .map(({ wireNote, props }) => {
-    const character = isolate(Character, `character-${props.name}`)({ NOTE$: wireNote.NOTE$, props$: xs.of(props) })
+    const character = isolate(Character, `character-${props.name}`)({ NOTE$: wireNote.NOTE$, props })
     return { wireNote, props, character }
   })
   // Create music wire - connected after character -
