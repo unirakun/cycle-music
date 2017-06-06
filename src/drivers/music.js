@@ -1,10 +1,5 @@
-import Synth from 'trampss-audiosynth'
+// import Synth from 'trampss-audiosynth'
+// Synth.play(/* instrument */, /* note */, /* octave */, /* time */)
 
-export default (sink$) => {
-  sink$.addListener({
-    next: (music) => {
-      const { instrument, note, time } = music
-      Synth.play(instrument, note, 3, time)
-    },
-  })
+export default (/* sink$ */) => {
 }
