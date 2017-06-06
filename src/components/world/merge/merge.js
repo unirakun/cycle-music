@@ -2,7 +2,7 @@ import { img } from '@cycle/dom'
 import xs from 'xstream'
 import { getNumber, getClassNameFromNumber, addDelay } from '../../../utils'
 
-const model = sources => getNumber(sources.MUSIC$)
+const model = sources => getNumber(sources.MUSICS$)
 
 const view = state$ => (
   state$
@@ -14,11 +14,11 @@ const view = state$ => (
     ))
 )
 
-export default (MUSICS) => {
-  const MUSIC$ = xs.merge(...MUSICS)
+export default (/* MUSICS */) => {
+  const MUSICS$ = xs.empty()
 
   return {
-    DOM$: view(model({ MUSIC$ })),
-    MUSIC$: addDelay(MUSIC$),
+    DOM$: view(model({ MUSICS$ })),
+    MUSICS$: addDelay(MUSICS$),
   }
 }

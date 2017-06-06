@@ -31,7 +31,7 @@ export default ({ DOM$ }) => {
 
   // Merge Music wire
   const merge = Merge(connectedCharacters.map(({ wireMusic }) => wireMusic.MUSIC$))
-  const wireMerge = Wire({ MUSICS$: merge.MUSIC$ })
+  const wireMerge = Wire({ MUSICS$: merge.MUSICS$ })
 
   // Draw DOM with all Component
   // Transform character object to flow of dom - Dom of wireNote, character and wireMusic -
