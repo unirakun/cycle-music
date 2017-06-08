@@ -1,13 +1,9 @@
 import { run } from '@cycle/run'
-import { makeDOMDriver /* , img*/ } from '@cycle/dom'
+import { makeDOMDriver } from '@cycle/dom'
 import list from './list'
+import Character from './character'
 
 const CHARACTER_NAMES = ['zora']
-
-const Character = (/* sources */) => {
-  const sinks = {}
-  return sinks
-}
 
 const main = (sources) => {
   const characters = CHARACTER_NAMES.map(name => Character({ ...sources, name }))
